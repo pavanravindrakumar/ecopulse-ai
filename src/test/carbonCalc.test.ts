@@ -6,7 +6,6 @@ import {
   calcShoppingScore,
   calcWasteScore,
   calculateCarbonScore,
-  getGrade,
 } from '../utils/carbonCalc';
 import type { OnboardingData } from '../types';
 

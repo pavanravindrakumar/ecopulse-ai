@@ -48,13 +48,13 @@ const FLIGHT_OPTIONS: { value: FlightFrequency; label: string; desc: string }[] 
 // ─── Slide animation ──────────────────────────────────────────────────────────
 const slideVariants = {
   enter: (dir: number) => ({ x: dir > 0 ? 60 : -60, opacity: 0 }),
-  center: { x: 0, opacity: 1, transition: { duration: 0.35, ease: [0.22, 1, 0.36, 1] } },
+  center: { x: 0, opacity: 1, transition: { duration: 0.35, ease: 'easeOut' as const } },
   exit: (dir: number) => ({ x: dir > 0 ? -60 : 60, opacity: 0, transition: { duration: 0.25 } }),
 };
 
 export default function OnboardingPage() {
   const navigate = useNavigate();
-  const { initProfile, updateOnboardingData, completeOnboarding, onboardingData } = useUserStore();
+  const { initProfile, updateOnboardingData, completeOnboarding } = useUserStore();
   const gamBadge = useGamificationStore((s) => s.unlockBadge);
   usePageTitle('Onboarding');
 

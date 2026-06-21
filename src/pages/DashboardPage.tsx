@@ -4,7 +4,7 @@ import { useGamificationStore } from '../store/useTrackerStore';
 import { useTrackerStore } from '../store/useTrackerStore';
 import { getCategoryLabel, getCategoryColor, GLOBAL_AVERAGE_ANNUAL_TONS, PARIS_TARGET_ANNUAL_TONS } from '../utils/carbonCalc';
 import { getLevelInfo, getLevelProgress } from '../utils/gamification';
-import type { CategoryScore, UserLevel } from '../types';
+import type { CategoryScore } from '../types';
 import {
   ResponsiveContainer,
   PieChart, Pie, Cell, Tooltip, Legend,
@@ -24,7 +24,7 @@ export default function DashboardPage() {
   const profile = useUserStore((s) => s.profile);
   const { greenPoints, level, streak, totalCo2Saved } = useGamificationStore();
   const logs = useTrackerStore((s) => s.logs);
-  const levelInfo = getLevelInfo(level as UserLevel);
+  const levelInfo = getLevelInfo(level);
   const levelProgress = getLevelProgress(greenPoints);
 
   const carbonScore = profile?.carbonScore;
@@ -219,7 +219,7 @@ export default function DashboardPage() {
                 </Pie>
                 <Tooltip
                   contentStyle={{ background: '#0e1a13', border: '1px solid rgba(34,197,94,0.2)', borderRadius: 8, color: '#f0fdf4' }}
-                  formatter={(val: number) => [`${val} kg/mo`, '']}
+                  formatter={(val: any) => [`${val} kg/mo`, '']}
                 />
                 <Legend
                   layout="vertical"
@@ -274,7 +274,7 @@ export default function DashboardPage() {
               <YAxis tick={{ fill: '#9ca3af', fontSize: 10 }} tickLine={false} axisLine={false} />
               <Tooltip
                 contentStyle={{ background: '#0e1a13', border: '1px solid rgba(34,197,94,0.2)', borderRadius: 8, color: '#f0fdf4' }}
-                formatter={(val: number) => [`${val} kg`, 'CO₂ Saved']}
+                formatter={(val: any) => [`${val} kg`, 'CO₂ Saved']}
               />
               <Area
                 type="monotone"

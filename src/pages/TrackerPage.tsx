@@ -6,19 +6,19 @@ import { useTrackerStore, useGamificationStore } from '../store/useTrackerStore'
 import { usePageTitle } from '../hooks/usePageTitle';
 import type { HabitCategory } from '../types';
 
-const PRESET_HABITS = [
-  { id: 'h1', title: 'Took public transport', category: 'transport' as HabitCategory, co2Saved: 3.5, icon: '🚌' },
-  { id: 'h2', title: 'Walked instead of driving', category: 'transport' as HabitCategory, co2Saved: 1.8, icon: '🚶' },
-  { id: 'h3', title: 'Cycled to destination', category: 'transport' as HabitCategory, co2Saved: 2.5, icon: '🚴' },
-  { id: 'h4', title: 'Turned off standby devices', category: 'energy' as HabitCategory, co2Saved: 0.3, icon: '🔌' },
-  { id: 'h5', title: 'Washed at 30°C', category: 'energy' as HabitCategory, co2Saved: 0.5, icon: '👕' },
-  { id: 'h6', title: 'Ate plant-based meal', category: 'food' as HabitCategory, co2Saved: 1.5, icon: '🥦' },
-  { id: 'h7', title: 'Avoided food waste', category: 'food' as HabitCategory, co2Saved: 0.8, icon: '🍽️' },
-  { id: 'h8', title: 'Bought second-hand', category: 'shopping' as HabitCategory, co2Saved: 4.0, icon: '♻️' },
-  { id: 'h9', title: 'Recycled correctly', category: 'waste' as HabitCategory, co2Saved: 0.6, icon: '🗂️' },
-  { id: 'h10', title: 'Composted food scraps', category: 'waste' as HabitCategory, co2Saved: 0.4, icon: '🌱' },
-  { id: 'h11', title: 'Used reusable bag/cup', category: 'waste' as HabitCategory, co2Saved: 0.2, icon: '🛍️' },
-  { id: 'h12', title: 'Skipped online delivery', category: 'shopping' as HabitCategory, co2Saved: 0.5, icon: '📦' },
+const PRESET_HABITS: Array<{ id: string; title: string; category: HabitCategory; co2Saved: number; icon: string }> = [
+  { id: 'h1', title: 'Took public transport', category: 'transport', co2Saved: 3.5, icon: '🚌' },
+  { id: 'h2', title: 'Walked instead of driving', category: 'transport', co2Saved: 1.8, icon: '🚶' },
+  { id: 'h3', title: 'Cycled to destination', category: 'transport', co2Saved: 2.5, icon: '🚴' },
+  { id: 'h4', title: 'Turned off standby devices', category: 'energy', co2Saved: 0.3, icon: '🔌' },
+  { id: 'h5', title: 'Washed at 30°C', category: 'energy', co2Saved: 0.5, icon: '👕' },
+  { id: 'h6', title: 'Ate plant-based meal', category: 'food', co2Saved: 1.5, icon: '🥦' },
+  { id: 'h7', title: 'Avoided food waste', category: 'food', co2Saved: 0.8, icon: '🍽️' },
+  { id: 'h8', title: 'Bought second-hand', category: 'shopping', co2Saved: 4.0, icon: '♻️' },
+  { id: 'h9', title: 'Recycled correctly', category: 'waste', co2Saved: 0.6, icon: '🗂️' },
+  { id: 'h10', title: 'Composted food scraps', category: 'waste', co2Saved: 0.4, icon: '🌱' },
+  { id: 'h11', title: 'Used reusable bag/cup', category: 'waste', co2Saved: 0.2, icon: '🛍️' },
+  { id: 'h12', title: 'Skipped online delivery', category: 'shopping', co2Saved: 0.5, icon: '📦' },
 ];
 
 const CATEGORY_COLORS: Record<HabitCategory | 'other', string> = {
@@ -42,7 +42,7 @@ const CATEGORY_LABELS: Record<HabitCategory | 'other', string> = {
 export default function TrackerPage() {
   const today = format(new Date(), 'yyyy-MM-dd');
   const { logs, addLog, removeLog, getLogsForDate } = useTrackerStore();
-  const { addPointsAndUpdate, streak, greenPoints } = useGamificationStore();
+  const { addPointsAndUpdate, streak } = useGamificationStore();
   usePageTitle('Tracker');
   const todayLogs = getLogsForDate(today);
   const [lastLogged, setLastLogged] = useState<string | null>(null);
@@ -101,7 +101,9 @@ export default function TrackerPage() {
         </div>
         <div className="ml-auto flex items-center">
           <button
-            onClick={() => {}}
+            onClick={() => {
+              document.getElementById('quick-log')?.scrollIntoView({ behavior: 'smooth' });
+            }}
             className="btn-primary"
             id="log-habit-btn"
             aria-label="Log a new habit"
@@ -132,7 +134,7 @@ export default function TrackerPage() {
       </AnimatePresence>
 
       {/* Quick Log Grid */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="mb-8">
+      <motion.div id="quick-log" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="mb-8">
         <h2 className="text-lg font-bold mb-4" style={{ color: '#f0fdf4' }}>Quick Log</h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {PRESET_HABITS.map((habit) => {

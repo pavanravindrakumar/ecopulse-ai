@@ -156,7 +156,6 @@ export interface UserProfile {
   id: string;
   name: string;
   onboardingCompleted: boolean;
-  onboardingData: Partial<OnboardingData>;
   carbonScore: CarbonScore | null;
   recommendations: Recommendation[];
   createdAt: string;

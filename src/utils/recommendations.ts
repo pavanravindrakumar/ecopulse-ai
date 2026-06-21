@@ -267,7 +267,3 @@ export function generateRecommendations(data: Partial<OnboardingData>): Recommen
 
   return selected;
 }
-
-export function getAllHabits(): Recommendation[] {
-  return ALL_RECOMMENDATIONS;
-}

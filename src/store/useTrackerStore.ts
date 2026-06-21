@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import type { HabitLog } from '../types';
+import type { HabitLog, UserLevel, BadgeId } from '../types';
 import {
   calcPointsForLog,
   updateStreak,
@@ -26,7 +26,7 @@ interface TrackerStore {
 
 interface GamificationStore {
   greenPoints: number;
-  level: string;
+  level: UserLevel;
   badges: typeof BADGE_DEFINITIONS;
   streak: number;
   longestStreak: number;
@@ -35,7 +35,7 @@ interface GamificationStore {
   categoriesLogged: string[];
 
   addPointsAndUpdate: (log: HabitLog) => void;
-  unlockBadge: (id: string) => void;
+  unlockBadge: (id: BadgeId) => void;
   reset: () => void;
 }
 
@@ -144,7 +144,7 @@ export const useGamificationStore = create<GamificationStore>()(
         });
       },
 
-      unlockBadge: (id: string) => {
+      unlockBadge: (id: BadgeId) => {
         set((state) => ({
           badges: state.badges.map((b) =>
             b.id === id ? { ...b, unlocked: true, earnedAt: new Date().toISOString() } : b

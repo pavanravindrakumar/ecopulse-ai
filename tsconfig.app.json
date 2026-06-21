@@ -15,9 +15,9 @@
     "noEmit": true,
     "jsx": "react-jsx",
 
-    /* Linting — relaxed for hackathon velocity */
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
+    /* Linting — strict for hackathon quality */
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
     "strict": true

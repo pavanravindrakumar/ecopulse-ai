@@ -1,17 +1,19 @@
-import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useGamificationStore } from '../store/useTrackerStore';
 import { LEVELS, getLevelInfo, getLevelProgress } from '../utils/gamification';
-import { Lock, Share2 } from 'lucide-react';
+import { Lock, Share2, CheckCircle2 } from 'lucide-react';
 import { usePageTitle } from '../hooks/usePageTitle';
-import type { UserLevel } from '../types';
+
 
 export default function GamificationPage() {
-  const { greenPoints, level, badges, streak, longestStreak, totalCo2Saved } = useGamificationStore();
+  const { greenPoints, level, badges, longestStreak, totalCo2Saved } = useGamificationStore();
   usePageTitle('Achievements');
-  const levelInfo = getLevelInfo(level as UserLevel);
+  const levelInfo = getLevelInfo(level);
   const levelProgress = getLevelProgress(greenPoints);
   const unlockedBadges = badges.filter((b) => b.unlocked);
   const lockedBadges = badges.filter((b) => !b.unlocked);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   return (
     <div className="p-6 md:p-8 max-w-4xl mx-auto">
@@ -28,7 +30,8 @@ export default function GamificationPage() {
               navigator.share({ title: 'EcoPulse AI', text }).catch(() => {});
             } else {
               navigator.clipboard.writeText(text);
-              alert('Copied to clipboard!');
+              setToastMessage('Copied to clipboard!');
+              setTimeout(() => setToastMessage(null), 2500);
             }
           }}
           className="btn-secondary flex items-center gap-2 text-sm px-4 py-2"
@@ -38,6 +41,24 @@ export default function GamificationPage() {
           Share
         </button>
       </motion.div>
+
+      {/* Toast notification */}
+      <AnimatePresence>
+        {toastMessage && (
+          <motion.div
+            initial={{ opacity: 0, y: -20, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.9 }}
+            className="fixed top-6 right-6 z-50 flex items-center gap-3 px-4 py-3 rounded-2xl"
+            style={{ background: '#0d4a2f', border: '1px solid rgba(34,197,94,0.3)', color: '#f0fdf4' }}
+            role="status"
+            aria-live="polite"
+          >
+            <CheckCircle2 size={18} className="text-green-400" aria-hidden="true" />
+            <span className="text-sm font-medium">{toastMessage}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Level Card */}
       <motion.div

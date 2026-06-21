@@ -1,12 +1,12 @@
 import { useState, useRef } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { LayoutDashboard, Leaf, Lightbulb, BarChart3, Trophy, LogOut, Download, Upload } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { LayoutDashboard, Leaf, Lightbulb, BarChart3, Trophy, LogOut, Download, Upload, AlertCircle } from 'lucide-react';
 import ConfirmModal from './ui/ConfirmModal';
 import { useUserStore } from '../store/useUserStore';
 import { useGamificationStore } from '../store/useTrackerStore';
 import { getLevelInfo } from '../utils/gamification';
-import type { UserLevel } from '../types';
+
 
 const navItems = [
   { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
@@ -23,9 +23,10 @@ export default function Layout() {
   const { greenPoints, level } = useGamificationStore();
   const navigate = useNavigate();
 
-  const levelInfo = getLevelInfo(level as UserLevel);
+  const levelInfo = getLevelInfo(level);
 
   const [showResetModal, setShowResetModal] = useState(false);
+  const [errorToast, setErrorToast] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleLogout = () => {
@@ -62,7 +63,8 @@ export default function Layout() {
         if (data.gamification) localStorage.setItem('ecopulse-gamification-v1', data.gamification);
         window.location.reload();
       } catch (err) {
-        alert('Invalid backup file. Please ensure you are uploading a valid EcoPulse AI export.');
+        setErrorToast('Invalid backup file. Please ensure you are uploading a valid EcoPulse AI export.');
+        setTimeout(() => setErrorToast(null), 3000);
       }
     };
     reader.readAsText(file);
@@ -230,6 +232,24 @@ export default function Layout() {
         onConfirm={handleLogout}
         onCancel={() => setShowResetModal(false)}
       />
+
+      {/* Error Toast notification */}
+      <AnimatePresence>
+        {errorToast && (
+          <motion.div
+            initial={{ opacity: 0, y: -20, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.9 }}
+            className="fixed top-6 right-6 z-50 flex items-center gap-3 px-4 py-3 rounded-2xl"
+            style={{ background: '#450a0a', border: '1px solid rgba(239,68,68,0.3)', color: '#fef2f2' }}
+            role="alert"
+            aria-live="assertive"
+          >
+            <AlertCircle size={18} className="text-red-400" aria-hidden="true" />
+            <span className="text-sm font-medium">{errorToast}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

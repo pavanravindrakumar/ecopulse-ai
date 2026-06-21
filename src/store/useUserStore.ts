@@ -9,13 +9,11 @@ import { generateRecommendations } from '../utils/recommendations';
 interface UserStore {
   profile: UserProfile | null;
   isOnboarded: boolean;
-  currentOnboardingStep: number;
   onboardingData: Partial<OnboardingData>;
 
   // Actions
   initProfile: (name: string) => void;
   updateOnboardingData: (data: Partial<OnboardingData>) => void;
-  setOnboardingStep: (step: number) => void;
   completeOnboarding: () => void;
   updateProfile: (partial: Partial<UserProfile>) => void;
   markRecommendationComplete: (id: string) => void;
@@ -46,7 +44,6 @@ export const useUserStore = create<UserStore>()(
     (set, get) => ({
       profile: null,
       isOnboarded: false,
-      currentOnboardingStep: 0,
       onboardingData: { ...defaultOnboardingData },
 
       initProfile: (name: string) => {
@@ -54,7 +51,6 @@ export const useUserStore = create<UserStore>()(
           id: crypto.randomUUID(),
           name: name.trim().slice(0, 50), // sanitize length
           onboardingCompleted: false,
-          onboardingData: {},
           carbonScore: null,
           recommendations: [],
           createdAt: new Date().toISOString(),
@@ -68,10 +64,6 @@ export const useUserStore = create<UserStore>()(
         }));
       },
 
-      setOnboardingStep: (step: number) => {
-        set({ currentOnboardingStep: step });
-      },
-
       completeOnboarding: () => {
         const { profile, onboardingData } = get();
         if (!profile) return;
@@ -82,7 +74,6 @@ export const useUserStore = create<UserStore>()(
         const updatedProfile: UserProfile = {
           ...profile,
           onboardingCompleted: true,
-          onboardingData,
           carbonScore,
           recommendations,
         };
@@ -109,7 +100,6 @@ export const useUserStore = create<UserStore>()(
         set({
           profile: null,
           isOnboarded: false,
-          currentOnboardingStep: 0,
           onboardingData: { ...defaultOnboardingData },
         });
       },

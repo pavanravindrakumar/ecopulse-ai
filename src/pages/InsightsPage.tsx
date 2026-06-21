@@ -140,7 +140,7 @@ export default function InsightsPage() {
               <YAxis tick={{ fill: '#9ca3af', fontSize: 12 }} axisLine={false} tickLine={false} />
               <Tooltip
                 contentStyle={{ background: '#0e1a13', border: '1px solid rgba(34,197,94,0.2)', borderRadius: 8, color: '#f0fdf4' }}
-                formatter={(val: number) => [`${val} kg`, 'CO₂ Saved']}
+                formatter={(val: any) => [`${val} kg`, 'CO₂ Saved']}
               />
               <Bar dataKey="saved" fill="#22c55e" radius={[4, 4, 0, 0]} maxBarSize={48} />
             </BarChart>

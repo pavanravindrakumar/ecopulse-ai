@@ -125,8 +125,8 @@ function getPercentile(annualTons: number): number {
 // ─── Benchmark Data ───────────────────────────────────────────────────────────
 
 export const GLOBAL_AVERAGE_ANNUAL_TONS = 4.7;
-export const INDIA_AVERAGE_ANNUAL_TONS = 1.9;
 export const PARIS_TARGET_ANNUAL_TONS = 2.3;
+export const INDIA_AVERAGE_ANNUAL_TONS = 1.9;
 
 export function getCategoryLabel(category: keyof CategoryScore): string {
   const labels: Record<keyof CategoryScore, string> = {
