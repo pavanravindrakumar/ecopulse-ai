@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Performance: Critical preconnects first -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- PWA: Manifest and icons -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="EcoPulse AI" />
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect width='180' height='180' rx='28' fill='%230d4a2f'/><text y='130' x='15' font-size='120'>🌿</text></svg>" />
+
+    <!-- Viewport & Theme -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#0d4a2f" />
+    <meta name="color-scheme" content="dark" />
+
+    <!-- Primary SEO -->
+    <title>EcoPulse AI — Small habits. Big climate impact.</title>
+    <meta name="description" content="EcoPulse AI helps you understand your personal carbon footprint, track daily eco-habits, get AI-powered recommendations, and earn badges for sustainable living." />
+    <meta name="keywords" content="carbon footprint tracker, sustainability app, eco habits, climate action, green living, carbon calculator" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://ecopulse-ai.vercel.app/" />
+
+    <!-- Open Graph / Social -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://ecopulse-ai.vercel.app/" />
+    <meta property="og:title" content="EcoPulse AI — Small habits. Big climate impact." />
+    <meta property="og:description" content="AI-powered carbon footprint awareness. Track habits, get personalized recommendations, and reduce your climate impact." />
+    <meta property="og:site_name" content="EcoPulse AI" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="EcoPulse AI" />
+    <meta name="twitter:description" content="Small habits. Big climate impact. AI-powered carbon footprint tracker." />
+
+    <!-- Performance: Preload Inter font (display=swap eliminates render-block) -->
+    <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+      onload="this.onload=null;this.rel='stylesheet'"
+    />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+      />
+    </noscript>
+
+    <!-- Structured Data: SoftwareApplication -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "EcoPulse AI",
+      "description": "AI-powered carbon footprint tracker that helps you understand, track, and reduce your climate impact.",
+      "applicationCategory": "LifestyleApplication",
+      "operatingSystem": "Web",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+    </script>
+
+    <!-- Skip link inline styles (must be in head for immediate render) -->
+    <style>
+      /* Critical: prevent FOUC */
+      html { background: #070d0a; color-scheme: dark; }
+      body { margin: 0; }
+      /* Accessible skip link */
+      .skip-link {
+        position: fixed;
+        top: -100px;
+        left: 16px;
+        background: #22c55e;
+        color: #000;
+        padding: 12px 20px;
+        font-weight: 700;
+        font-family: 'Inter', system-ui, sans-serif;
+        font-size: 14px;
+        z-index: 99999;
+        border-radius: 0 0 8px 8px;
+        text-decoration: none;
+        transition: top 0.15s ease;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      }
+      .skip-link:focus {
+        top: 0;
+        outline: 3px solid #fff;
+        outline-offset: 2px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Accessibility: Skip to main content for keyboard users -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- No-JS fallback -->
+    <noscript>
+      <style>
+        #noscript-msg {
+          font-family: system-ui, sans-serif;
+          text-align: center;
+          padding: 60px 20px;
+          color: #f0fdf4;
+          background: #070d0a;
+          min-height: 100vh;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-direction: column;
+          gap: 16px;
+        }
+        #noscript-msg h1 { color: #22c55e; margin: 0; }
+        #noscript-msg p { color: #9ca3af; margin: 0; }
+      </style>
+      <div id="noscript-msg">
+        <h1>🌿 EcoPulse AI</h1>
+        <p>Please enable JavaScript to use this application.</p>
+      </div>
+    </noscript>
+
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
