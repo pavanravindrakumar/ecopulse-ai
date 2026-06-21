@@ -8,6 +8,9 @@ export default defineConfig({
     tailwindcss(),
   ],
   build: {
+    // Prevent Vite from injecting <link rel="modulepreload"> for lazy chunks
+    // This stops the browser from eagerly fetching animation/charts bundles on the landing page
+    modulePreload: { polyfill: false },
     rollupOptions: {
       output: {
         manualChunks(id) {

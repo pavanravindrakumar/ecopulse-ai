@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Leaf, TrendingDown, Award, Zap } from 'lucide-react';
 import { usePageTitle } from '../hooks/usePageTitle';
@@ -33,14 +32,20 @@ const features = [
   },
 ];
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 30 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { delay: i * 0.1, duration: 0.6, ease: 'easeOut' as const },
-  }),
-};
+// CSS-only animation styles — keeps framer-motion out of the initial bundle
+const css = `
+  @keyframes lp-fade-in { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes lp-badge-in { from { opacity: 0; transform: scale(0.85); } to { opacity: 1; transform: scale(1); } }
+  .lp-fade { opacity: 0; animation: lp-fade-in 0.6s ease-out forwards; }
+  .lp-badge { opacity: 0; animation: lp-badge-in 0.6s ease-out forwards; }
+  .lp-d0 { animation-delay: 0s; }
+  .lp-d1 { animation-delay: 0.1s; }
+  .lp-d2 { animation-delay: 0.2s; }
+  .lp-d3 { animation-delay: 0.3s; }
+  .lp-d4 { animation-delay: 0.4s; }
+  .lp-d5 { animation-delay: 0.5s; }
+  .lp-d6 { animation-delay: 0.6s; }
+`;
 
 export default function LandingPage() {
   usePageTitle('Home');
@@ -50,6 +55,8 @@ export default function LandingPage() {
       className="min-h-screen relative overflow-hidden"
       style={{ background: 'linear-gradient(160deg, #070d0a 0%, #0d1f14 50%, #070d0a 100%)' }}
     >
+      <style>{css}</style>
+
       {/* Ambient glow */}
       <div
         className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] rounded-full opacity-20 pointer-events-none"
@@ -86,50 +93,33 @@ export default function LandingPage() {
 
         {/* Hero */}
         <section className="text-center py-20 md:py-32" aria-labelledby="hero-heading">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6, ease: 'easeOut' as const }}
-            className="inline-flex items-center gap-2 mb-6 px-4 py-2 rounded-full text-sm font-medium"
+          <div
+            className="lp-badge lp-d0 inline-flex items-center gap-2 mb-6 px-4 py-2 rounded-full text-sm font-medium"
             style={{ background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.2)', color: '#4ade80' }}
           >
             <span className="animate-pulse-green w-2 h-2 rounded-full bg-green-400 inline-block" aria-hidden="true" />
             Challenge 3: Carbon Footprint Awareness
-          </motion.div>
+          </div>
 
-          <motion.h1
+          <h1
             id="hero-heading"
-            custom={0}
-            variants={fadeUp}
-            initial="hidden"
-            animate="visible"
-            className="text-5xl md:text-7xl font-black leading-tight mb-6"
+            className="lp-fade lp-d1 text-5xl md:text-7xl font-black leading-tight mb-6"
             style={{ color: '#f0fdf4' }}
           >
             Small habits.
             <br />
             <span className="gradient-text">Big climate impact.</span>
-          </motion.h1>
+          </h1>
 
-          <motion.p
-            custom={1}
-            variants={fadeUp}
-            initial="hidden"
-            animate="visible"
-            className="text-xl md:text-2xl max-w-2xl mx-auto mb-10 leading-relaxed"
+          <p
+            className="lp-fade lp-d2 text-xl md:text-2xl max-w-2xl mx-auto mb-10 leading-relaxed"
             style={{ color: '#86efac' }}
           >
             Turn your daily routines into measurable climate action.
             Discover your footprint, get AI recommendations, and track your progress to a net-zero lifestyle.
-          </motion.p>
+          </p>
 
-          <motion.div
-            custom={2}
-            variants={fadeUp}
-            initial="hidden"
-            animate="visible"
-            className="flex flex-col sm:flex-row gap-4 justify-center"
-          >
+          <div className="lp-fade lp-d3 flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               to="/onboarding"
               className="btn-primary text-lg px-8 py-4 rounded-2xl inline-flex items-center justify-center"
@@ -146,60 +136,42 @@ export default function LandingPage() {
             >
               Learn More
             </button>
-          </motion.div>
+          </div>
         </section>
 
         {/* Stats */}
-        <motion.section
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4, duration: 0.8 }}
+        <section
           className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-24"
           aria-label="Climate statistics"
         >
           {stats.map((stat, i) => (
-            <motion.div
-              key={i}
-              custom={i}
-              variants={fadeUp}
-              initial="hidden"
-              animate="visible"
-              className="card p-5 text-center"
-            >
+            <div key={i} className={`lp-fade lp-d${i} card p-5 text-center`}>
               <div className="text-3xl mb-2" aria-hidden="true">{stat.icon}</div>
               <p className="text-2xl font-black gradient-text">{stat.value}</p>
               <p className="text-xs mt-1" style={{ color: '#9ca3af' }}>{stat.label}</p>
-            </motion.div>
+            </div>
           ))}
-        </motion.section>
+        </section>
 
         {/* Features */}
         <section id="features" className="pb-32" aria-labelledby="features-heading">
-          <motion.h2
+          <h2
             id="features-heading"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
             className="text-3xl md:text-4xl font-bold text-center mb-4"
             style={{ color: '#f0fdf4' }}
           >
             Everything you need to
             <span className="gradient-text"> go green</span>
-          </motion.h2>
+          </h2>
           <p className="text-center mb-12 text-lg" style={{ color: '#9ca3af' }}>
             A complete ecosystem for sustainable living
           </p>
 
           <div className="grid md:grid-cols-2 gap-6">
             {features.map((feat, i) => (
-              <motion.div
+              <div
                 key={i}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1, duration: 0.6 }}
-                className="card card-interactive p-6 flex gap-4"
+                className={`lp-fade lp-d${i + 2} card card-interactive p-6 flex gap-4`}
               >
                 <div
                   className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
@@ -212,18 +184,14 @@ export default function LandingPage() {
                   <h3 className="font-semibold mb-1" style={{ color: '#f0fdf4' }}>{feat.title}</h3>
                   <p className="text-sm leading-relaxed" style={{ color: '#9ca3af' }}>{feat.desc}</p>
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
         </section>
 
         {/* CTA Banner */}
-        <motion.section
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="mb-24 rounded-3xl p-10 text-center relative overflow-hidden"
+        <section
+          className="mb-24 rounded-3xl p-10 text-center relative overflow-hidden lp-fade lp-d4"
           style={{ background: 'linear-gradient(135deg, #0d4a2f 0%, #1a6b47 50%, #16a34a 100%)' }}
           aria-labelledby="cta-heading"
         >
@@ -251,7 +219,7 @@ export default function LandingPage() {
             Start Your Assessment
             <ArrowRight size={20} aria-hidden="true" />
           </Link>
-        </motion.section>
+        </section>
 
         {/* Footer */}
         <footer className="text-center pb-12" role="contentinfo">

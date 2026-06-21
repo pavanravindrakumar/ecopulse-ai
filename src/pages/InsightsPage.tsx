@@ -10,6 +10,7 @@ import {
 import { format, subMonths } from 'date-fns';
 import { TrendingDown, Calendar, Target } from 'lucide-react';
 import { usePageTitle } from '../hooks/usePageTitle';
+import { useState, useEffect, useMemo } from 'react';
 
 export default function InsightsPage() {
   usePageTitle('Insights');
@@ -17,8 +18,14 @@ export default function InsightsPage() {
   const { greenPoints, streak, totalCo2Saved, badges } = useGamificationStore();
   const carbonScore = useUserStore((s) => s.profile?.carbonScore);
 
+  const [chartsMounted, setChartsMounted] = useState(false);
+  useEffect(() => {
+    const timer = setTimeout(() => setChartsMounted(true), 100);
+    return () => clearTimeout(timer);
+  }, []);
+
   // Monthly data for last 6 months
-  const monthlyData = Array.from({ length: 6 }, (_, i) => {
+  const monthlyData = useMemo(() => Array.from({ length: 6 }, (_, i) => {
     const monthDate = subMonths(new Date(), 5 - i);
     const monthStr = format(monthDate, 'yyyy-MM');
     const monthLogs = logs.filter((l) => l.date.startsWith(monthStr));
@@ -30,7 +37,7 @@ export default function InsightsPage() {
       logs: monthLogs.length,
       points,
     };
-  });
+  }), [logs]);
 
   // Category breakdown from logs
   const categoryTotals: Record<string, number> = {};
@@ -130,27 +137,29 @@ export default function InsightsPage() {
       </div>
 
       {/* Monthly Savings Bar Chart */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }} className="card p-6 mb-6" role="region" aria-label="Monthly CO2 savings chart">
+      <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "100px" }} variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { delay: 0.2 } } }} className="card p-6 mb-6" role="region" aria-label="Monthly CO2 savings chart">
         <h2 className="text-lg font-bold mb-6" style={{ color: '#f0fdf4' }}>Monthly CO₂ Saved (kg)</h2>
         <div className="h-52">
-          <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={208}>
-            <BarChart data={monthlyData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(34,197,94,0.08)" vertical={false} />
-              <XAxis dataKey="month" tick={{ fill: '#9ca3af', fontSize: 12 }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fill: '#9ca3af', fontSize: 12 }} axisLine={false} tickLine={false} />
-              <Tooltip
-                contentStyle={{ background: '#0e1a13', border: '1px solid rgba(34,197,94,0.2)', borderRadius: 8, color: '#f0fdf4' }}
-                formatter={(val: number) => [`${val} kg`, 'CO₂ Saved']}
-              />
-              <Bar dataKey="saved" fill="#22c55e" radius={[4, 4, 0, 0]} maxBarSize={48} />
-            </BarChart>
-          </ResponsiveContainer>
+          {chartsMounted && (
+            <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={208}>
+              <BarChart data={monthlyData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(34,197,94,0.08)" vertical={false} />
+                <XAxis dataKey="month" tick={{ fill: '#9ca3af', fontSize: 12 }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fill: '#9ca3af', fontSize: 12 }} axisLine={false} tickLine={false} />
+                <Tooltip
+                  contentStyle={{ background: '#0e1a13', border: '1px solid rgba(34,197,94,0.2)', borderRadius: 8, color: '#f0fdf4' }}
+                  formatter={(val: number) => [`${val} kg`, 'CO₂ Saved']}
+                />
+                <Bar dataKey="saved" fill="#22c55e" radius={[4, 4, 0, 0]} maxBarSize={48} />
+              </BarChart>
+            </ResponsiveContainer>
+          )}
         </div>
       </motion.div>
 
       {/* Category Breakdown */}
       {categoryData.length > 0 && (
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="card p-6" role="region" aria-label="CO2 saved by category">
+        <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "50px" }} variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { delay: 0.2 } } }} className="card p-6" role="region" aria-label="CO2 saved by category">
           <h2 className="text-lg font-bold mb-4" style={{ color: '#f0fdf4' }}>Savings by Category</h2>
           <div className="space-y-4">
             {categoryData.map((cat) => {

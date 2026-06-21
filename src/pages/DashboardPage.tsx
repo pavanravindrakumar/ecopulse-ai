@@ -13,6 +13,7 @@ import {
 import { format, subDays } from 'date-fns';
 import { TrendingDown, Award, Flame, Leaf } from 'lucide-react';
 import { usePageTitle } from '../hooks/usePageTitle';
+import { useMemo, useState, useEffect } from 'react';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -30,17 +31,24 @@ export default function DashboardPage() {
   const carbonScore = profile?.carbonScore;
   const byCategory = carbonScore?.byCategory;
 
+  const [chartsMounted, setChartsMounted] = useState(false);
+  useEffect(() => {
+    // Delay charts rendering until layout is stable
+    const timer = setTimeout(() => setChartsMounted(true), 100);
+    return () => clearTimeout(timer);
+  }, []);
+
   // Pie chart data
-  const pieData = byCategory
+  const pieData = useMemo(() => byCategory
     ? (Object.keys(byCategory) as (keyof CategoryScore)[]).map((cat) => ({
         name: getCategoryLabel(cat),
         value: byCategory[cat],
         color: getCategoryColor(cat),
       }))
-    : [];
+    : [], [byCategory]);
 
   // Trend data — simulate last 30 days of progress
-  const trendData = Array.from({ length: 30 }, (_, i) => {
+  const trendData = useMemo(() => Array.from({ length: 30 }, (_, i) => {
     const date = subDays(new Date(), 29 - i);
     const dateStr = format(date, 'yyyy-MM-dd');
     const dayLogs = logs.filter((l) => l.date === dateStr);
@@ -53,13 +61,13 @@ export default function DashboardPage() {
   }).map((d, i, arr) => ({
     ...d,
     cumulative: Math.round(arr.slice(0, i + 1).reduce((s, x) => s + x.saved, 0) * 10) / 10,
-  }));
+  })), [logs]);
 
   const gradeColors: Record<string, string> = {
     'A+': '#22c55e', A: '#4ade80', B: '#86efac', C: '#f59e0b', D: '#f97316', F: '#ef4444',
   };
 
-  const stats = [
+  const stats = useMemo(() => [
     {
       icon: <TrendingDown size={20} aria-hidden="true" />,
       label: 'Monthly Footprint',
@@ -88,7 +96,7 @@ export default function DashboardPage() {
       sub: `${levelInfo.label} level`,
       color: '#86efac',
     },
-  ];
+  ], [carbonScore, totalCo2Saved, streak, greenPoints, levelInfo.label]);
 
   return (
     <div className="p-6 md:p-8 max-w-6xl mx-auto">
@@ -198,39 +206,41 @@ export default function DashboardPage() {
         </motion.div>
 
         {/* Breakdown Donut */}
-        <motion.div custom={5} variants={fadeUp} initial="hidden" animate="visible" className="card p-6" role="region" aria-label="Emissions breakdown by category">
+        <motion.div custom={0} variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "100px" }} className="card p-6" role="region" aria-label="Emissions breakdown by category">
           <h2 className="text-lg font-bold mb-4" style={{ color: '#f0fdf4' }}>Emissions Breakdown</h2>
           <div className="h-56">
-            <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={224}>
-              <PieChart>
-                <Pie
-                  data={pieData}
-                  cx="40%"
-                  cy="50%"
-                  innerRadius={55}
-                  outerRadius={85}
-                  paddingAngle={3}
-                  dataKey="value"
-                  aria-label="Carbon emissions by category donut chart"
-                >
-                  {pieData.map((entry, i) => (
-                    <Cell key={i} fill={entry.color} stroke="none" />
-                  ))}
-                </Pie>
-                <Tooltip
-                  contentStyle={{ background: '#0e1a13', border: '1px solid rgba(34,197,94,0.2)', borderRadius: 8, color: '#f0fdf4' }}
-                  formatter={(val: number) => [`${val} kg/mo`, '']}
-                />
-                <Legend
-                  layout="vertical"
-                  align="right"
-                  verticalAlign="middle"
-                  iconType="circle"
-                  iconSize={8}
-                  formatter={(val) => <span style={{ color: '#9ca3af', fontSize: '0.75rem' }}>{val}</span>}
-                />
-              </PieChart>
-            </ResponsiveContainer>
+            {chartsMounted && (
+              <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={224}>
+                <PieChart>
+                  <Pie
+                    data={pieData}
+                    cx="40%"
+                    cy="50%"
+                    innerRadius={55}
+                    outerRadius={85}
+                    paddingAngle={3}
+                    dataKey="value"
+                    aria-label="Carbon emissions by category donut chart"
+                  >
+                    {pieData.map((entry, i) => (
+                      <Cell key={i} fill={entry.color} stroke="none" />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    contentStyle={{ background: '#0e1a13', border: '1px solid rgba(34,197,94,0.2)', borderRadius: 8, color: '#f0fdf4' }}
+                    formatter={(val: number) => [`${val} kg/mo`, '']}
+                  />
+                  <Legend
+                    layout="vertical"
+                    align="right"
+                    verticalAlign="middle"
+                    iconType="circle"
+                    iconSize={8}
+                    formatter={(val) => <span style={{ color: '#9ca3af', fontSize: '0.75rem' }}>{val}</span>}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            )}
           </div>
           {byCategory && (
             <div className="mt-3 space-y-2">
@@ -252,45 +262,47 @@ export default function DashboardPage() {
       </div>
 
       {/* Progress Trend Chart */}
-      <motion.div custom={6} variants={fadeUp} initial="hidden" animate="visible" className="card p-6 mb-8" role="region" aria-label="CO2 savings trend over 30 days">
+      <motion.div custom={0} variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "100px" }} className="card p-6 mb-8" role="region" aria-label="CO2 savings trend over 30 days">
         <h2 className="text-lg font-bold mb-6" style={{ color: '#f0fdf4' }}>30-Day CO₂ Savings Trend</h2>
         <div className="h-48">
-          <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={192}>
-            <AreaChart data={trendData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
-              <defs>
-                <linearGradient id="co2gradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#22c55e" stopOpacity={0.3} />
-                  <stop offset="100%" stopColor="#22c55e" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(34,197,94,0.08)" />
-              <XAxis
-                dataKey="date"
-                tick={{ fill: '#9ca3af', fontSize: 10 }}
-                tickLine={false}
-                axisLine={false}
-                interval={6}
-              />
-              <YAxis tick={{ fill: '#9ca3af', fontSize: 10 }} tickLine={false} axisLine={false} />
-              <Tooltip
-                contentStyle={{ background: '#0e1a13', border: '1px solid rgba(34,197,94,0.2)', borderRadius: 8, color: '#f0fdf4' }}
-                formatter={(val: number) => [`${val} kg`, 'CO₂ Saved']}
-              />
-              <Area
-                type="monotone"
-                dataKey="cumulative"
-                stroke="#22c55e"
-                strokeWidth={2}
-                fill="url(#co2gradient)"
-                dot={false}
-              />
-            </AreaChart>
-          </ResponsiveContainer>
+          {chartsMounted && (
+            <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={192}>
+              <AreaChart data={trendData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="co2gradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#22c55e" stopOpacity={0.3} />
+                    <stop offset="100%" stopColor="#22c55e" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(34,197,94,0.08)" />
+                <XAxis
+                  dataKey="date"
+                  tick={{ fill: '#9ca3af', fontSize: 10 }}
+                  tickLine={false}
+                  axisLine={false}
+                  interval={6}
+                />
+                <YAxis tick={{ fill: '#9ca3af', fontSize: 10 }} tickLine={false} axisLine={false} />
+                <Tooltip
+                  contentStyle={{ background: '#0e1a13', border: '1px solid rgba(34,197,94,0.2)', borderRadius: 8, color: '#f0fdf4' }}
+                  formatter={(val: number) => [`${val} kg`, 'CO₂ Saved']}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="cumulative"
+                  stroke="#22c55e"
+                  strokeWidth={2}
+                  fill="url(#co2gradient)"
+                  dot={false}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          )}
         </div>
       </motion.div>
 
       {/* Level Progress */}
-      <motion.div custom={7} variants={fadeUp} initial="hidden" animate="visible" className="card p-6" role="region" aria-label="Level progress">
+      <motion.div custom={0} variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "100px" }} className="card p-6" role="region" aria-label="Level progress">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-bold" style={{ color: '#f0fdf4' }}>Your Level</h2>
           <span className="text-2xl" aria-hidden="true">{levelInfo.icon}</span>
