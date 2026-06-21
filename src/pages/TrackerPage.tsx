@@ -5,6 +5,7 @@ import { Plus, X, Flame, Leaf, CheckCircle2 } from 'lucide-react';
 import { useTrackerStore, useGamificationStore } from '../store/useTrackerStore';
 import { usePageTitle } from '../hooks/usePageTitle';
 import type { HabitCategory } from '../types';
+import { CATEGORY_COLORS, CATEGORY_LABELS } from '../constants/categories';
 
 const PRESET_HABITS: Array<{ id: string; title: string; category: HabitCategory; co2Saved: number; icon: string }> = [
   { id: 'h1', title: 'Took public transport', category: 'transport', co2Saved: 3.5, icon: '🚌' },
@@ -20,24 +21,6 @@ const PRESET_HABITS: Array<{ id: string; title: string; category: HabitCategory;
   { id: 'h11', title: 'Used reusable bag/cup', category: 'waste', co2Saved: 0.2, icon: '🛍️' },
   { id: 'h12', title: 'Skipped online delivery', category: 'shopping', co2Saved: 0.5, icon: '📦' },
 ];
-
-const CATEGORY_COLORS: Record<HabitCategory | 'other', string> = {
-  transport: '#22c55e',
-  energy: '#f59e0b',
-  food: '#3b82f6',
-  shopping: '#a855f7',
-  waste: '#ef4444',
-  other: '#9ca3af',
-};
-
-const CATEGORY_LABELS: Record<HabitCategory | 'other', string> = {
-  transport: 'Transport',
-  energy: 'Energy',
-  food: 'Food',
-  shopping: 'Shopping',
-  waste: 'Waste',
-  other: 'Other',
-};
 
 export default function TrackerPage() {
   const today = format(new Date(), 'yyyy-MM-dd');
