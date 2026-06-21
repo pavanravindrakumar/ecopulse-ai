@@ -2,11 +2,15 @@ import type {
   OnboardingData,
   CategoryScore,
   CarbonScore,
+  TransportMode,
+  DietType,
+  FlightFrequency,
 } from '../types';
+import { CATEGORY_COLORS, CATEGORY_LONG_LABELS } from '../constants/categories';
 
 // ─── Emission Factors ─────────────────────────────────────────────────────────
 
-const TRANSPORT_FACTORS: Record<string, number> = {
+const TRANSPORT_FACTORS: Record<TransportMode, number> = {
   car_petrol: 0.192,   // kg CO₂e per km
   car_diesel: 0.171,
   car_electric: 0.053,
@@ -17,7 +21,7 @@ const TRANSPORT_FACTORS: Record<string, number> = {
   walking: 0,
 };
 
-const DIET_FACTORS: Record<string, number> = {
+const DIET_FACTORS: Record<DietType, number> = {
   heavy_meat: 320,     // kg CO₂e per month
   omnivore: 230,
   flexitarian: 170,
@@ -25,7 +29,7 @@ const DIET_FACTORS: Record<string, number> = {
   vegan: 90,
 };
 
-const FLIGHT_FACTORS: Record<string, number> = {
+const FLIGHT_FACTORS: Record<FlightFrequency, number> = {
   never: 0,
   rarely: 50,          // kg CO₂e per month average
   sometimes: 150,
@@ -129,23 +133,9 @@ export const PARIS_TARGET_ANNUAL_TONS = 2.3;
 export const INDIA_AVERAGE_ANNUAL_TONS = 1.9;
 
 export function getCategoryLabel(category: keyof CategoryScore): string {
-  const labels: Record<keyof CategoryScore, string> = {
-    transport: 'Transport',
-    energy: 'Energy',
-    food: 'Food & Diet',
-    shopping: 'Shopping',
-    waste: 'Waste',
-  };
-  return labels[category];
+  return CATEGORY_LONG_LABELS[category];
 }
 
 export function getCategoryColor(category: keyof CategoryScore): string {
-  const colors: Record<keyof CategoryScore, string> = {
-    transport: '#22c55e',
-    energy: '#f59e0b',
-    food: '#3b82f6',
-    shopping: '#a855f7',
-    waste: '#ef4444',
-  };
-  return colors[category];
+  return CATEGORY_COLORS[category];
 }

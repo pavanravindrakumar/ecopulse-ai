@@ -3,6 +3,7 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import type { UserProfile, OnboardingData, CarbonScore, Recommendation } from '../types';
 import { calculateCarbonScore } from '../utils/carbonCalc';
 import { generateRecommendations } from '../utils/recommendations';
+import { DEFAULT_ONBOARDING_DATA } from '../constants/onboarding';
 
 // ─── User Store ───────────────────────────────────────────────────────────────
 
@@ -20,31 +21,12 @@ interface UserStore {
   reset: () => void;
 }
 
-const defaultOnboardingData: Partial<OnboardingData> = {
-  primaryTransport: 'car_petrol',
-  weeklyKm: 100,
-  flightFrequency: 'rarely',
-  monthlyElectricityKwh: 200,
-  hasRenewableEnergy: false,
-  hasGasHeating: false,
-  monthlyGasM3: 30,
-  dietType: 'omnivore',
-  localFoodPercentage: 20,
-  foodWasteLevel: 3,
-  monthlyOnlinePurchases: 4,
-  buySecondHand: false,
-  fastFashionFrequency: 2,
-  recyclingRate: 30,
-  compostsFood: false,
-  weeklyWasteKg: 5,
-};
-
 export const useUserStore = create<UserStore>()(
   persist(
     (set, get) => ({
       profile: null,
       isOnboarded: false,
-      onboardingData: { ...defaultOnboardingData },
+      onboardingData: { ...DEFAULT_ONBOARDING_DATA },
 
       initProfile: (name: string) => {
         const profile: UserProfile = {
@@ -100,7 +82,7 @@ export const useUserStore = create<UserStore>()(
         set({
           profile: null,
           isOnboarded: false,
-          onboardingData: { ...defaultOnboardingData },
+          onboardingData: { ...DEFAULT_ONBOARDING_DATA },
         });
       },
     }),

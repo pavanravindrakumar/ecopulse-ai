@@ -20,7 +20,8 @@ export default function Layout() {
   const profile = useUserStore((s) => s.profile);
   const reset = useUserStore((s) => s.reset);
   const gamReset = useGamificationStore((s) => s.reset);
-  const { greenPoints, level } = useGamificationStore();
+  const greenPoints = useGamificationStore((s) => s.greenPoints);
+  const level = useGamificationStore((s) => s.level);
   const navigate = useNavigate();
 
   const levelInfo = getLevelInfo(level);
@@ -62,7 +63,7 @@ export default function Layout() {
         if (data.tracker) localStorage.setItem('ecopulse-tracker-v1', data.tracker);
         if (data.gamification) localStorage.setItem('ecopulse-gamification-v1', data.gamification);
         window.location.reload();
-      } catch (err) {
+      } catch {
         setErrorToast('Invalid backup file. Please ensure you are uploading a valid EcoPulse AI export.');
         setTimeout(() => setErrorToast(null), 3000);
       }
