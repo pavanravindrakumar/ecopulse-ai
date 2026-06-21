@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { ArrowRight, Leaf, TrendingDown, Award, Zap } from 'lucide-react';
 import { usePageTitle } from '../hooks/usePageTitle';
 
@@ -44,7 +44,6 @@ const fadeUp = {
 
 export default function LandingPage() {
   usePageTitle('Home');
-  const navigate = useNavigate();
 
   return (
     <div
@@ -76,13 +75,13 @@ export default function LandingPage() {
             </div>
             <span className="font-bold text-lg" style={{ color: '#f0fdf4' }}>EcoPulse AI</span>
           </div>
-          <button
-            onClick={() => navigate('/onboarding')}
-            className="btn-secondary text-sm"
+          <Link
+            to="/onboarding"
+            className="btn-secondary text-sm inline-flex items-center justify-center"
             aria-label="Start your carbon assessment"
           >
             Get Started
-          </button>
+          </Link>
         </header>
 
         {/* Hero */}
@@ -131,15 +130,15 @@ export default function LandingPage() {
             animate="visible"
             className="flex flex-col sm:flex-row gap-4 justify-center"
           >
-            <button
-              onClick={() => navigate('/onboarding')}
-              className="btn-primary text-lg px-8 py-4 rounded-2xl"
+            <Link
+              to="/onboarding"
+              className="btn-primary text-lg px-8 py-4 rounded-2xl inline-flex items-center justify-center"
               id="cta-start"
               aria-label="Calculate your carbon footprint now"
             >
               Calculate My Footprint
               <ArrowRight size={20} aria-hidden="true" />
-            </button>
+            </Link>
             <button
               onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
               className="btn-secondary text-lg px-8 py-4 rounded-2xl"
@@ -243,15 +242,15 @@ export default function LandingPage() {
             Join thousands taking action. It takes 5 minutes to know your impact
             and a lifetime to make a difference.
           </p>
-          <button
-            onClick={() => navigate('/onboarding')}
-            className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl text-lg font-bold transition-all duration-200 hover:shadow-2xl hover:-translate-y-1"
+          <Link
+            to="/onboarding"
+            className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl text-lg font-bold transition-all duration-200 hover:shadow-2xl hover:-translate-y-1"
             style={{ background: '#f0fdf4', color: '#0d4a2f' }}
             aria-label="Start your carbon assessment now"
           >
             Start Your Assessment
             <ArrowRight size={20} aria-hidden="true" />
-          </button>
+          </Link>
         </motion.section>
 
         {/* Footer */}

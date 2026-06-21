@@ -133,14 +133,14 @@ export default function InsightsPage() {
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }} className="card p-6 mb-6" role="region" aria-label="Monthly CO2 savings chart">
         <h2 className="text-lg font-bold mb-6" style={{ color: '#f0fdf4' }}>Monthly CO₂ Saved (kg)</h2>
         <div className="h-52">
-          <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={208}>
             <BarChart data={monthlyData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(34,197,94,0.08)" vertical={false} />
               <XAxis dataKey="month" tick={{ fill: '#9ca3af', fontSize: 12 }} axisLine={false} tickLine={false} />
               <YAxis tick={{ fill: '#9ca3af', fontSize: 12 }} axisLine={false} tickLine={false} />
               <Tooltip
                 contentStyle={{ background: '#0e1a13', border: '1px solid rgba(34,197,94,0.2)', borderRadius: 8, color: '#f0fdf4' }}
-                formatter={(val: any) => [`${val} kg`, 'CO₂ Saved']}
+                formatter={(val: number) => [`${val} kg`, 'CO₂ Saved']}
               />
               <Bar dataKey="saved" fill="#22c55e" radius={[4, 4, 0, 0]} maxBarSize={48} />
             </BarChart>

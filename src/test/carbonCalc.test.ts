@@ -98,7 +98,7 @@ describe('calcFoodScore', () => {
 
   it('diet order: vegan < vegetarian < flexitarian < omnivore < heavy_meat', () => {
     const scores = ['vegan', 'vegetarian', 'flexitarian', 'omnivore', 'heavy_meat'].map(
-      (d) => calcFoodScore({ dietType: d as any, localFoodPercentage: 20, foodWasteLevel: 3 })
+      (d) => calcFoodScore({ dietType: d as OnboardingData['dietType'], localFoodPercentage: 20, foodWasteLevel: 3 })
     );
     for (let i = 1; i < scores.length; i++) {
       expect(scores[i]).toBeGreaterThanOrEqual(scores[i - 1]);

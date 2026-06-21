@@ -201,7 +201,7 @@ export default function DashboardPage() {
         <motion.div custom={5} variants={fadeUp} initial="hidden" animate="visible" className="card p-6" role="region" aria-label="Emissions breakdown by category">
           <h2 className="text-lg font-bold mb-4" style={{ color: '#f0fdf4' }}>Emissions Breakdown</h2>
           <div className="h-56">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={224}>
               <PieChart>
                 <Pie
                   data={pieData}
@@ -219,7 +219,7 @@ export default function DashboardPage() {
                 </Pie>
                 <Tooltip
                   contentStyle={{ background: '#0e1a13', border: '1px solid rgba(34,197,94,0.2)', borderRadius: 8, color: '#f0fdf4' }}
-                  formatter={(val: any) => [`${val} kg/mo`, '']}
+                  formatter={(val: number) => [`${val} kg/mo`, '']}
                 />
                 <Legend
                   layout="vertical"
@@ -255,7 +255,7 @@ export default function DashboardPage() {
       <motion.div custom={6} variants={fadeUp} initial="hidden" animate="visible" className="card p-6 mb-8" role="region" aria-label="CO2 savings trend over 30 days">
         <h2 className="text-lg font-bold mb-6" style={{ color: '#f0fdf4' }}>30-Day CO₂ Savings Trend</h2>
         <div className="h-48">
-          <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={192}>
             <AreaChart data={trendData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
               <defs>
                 <linearGradient id="co2gradient" x1="0" y1="0" x2="0" y2="1">
@@ -274,7 +274,7 @@ export default function DashboardPage() {
               <YAxis tick={{ fill: '#9ca3af', fontSize: 10 }} tickLine={false} axisLine={false} />
               <Tooltip
                 contentStyle={{ background: '#0e1a13', border: '1px solid rgba(34,197,94,0.2)', borderRadius: 8, color: '#f0fdf4' }}
-                formatter={(val: any) => [`${val} kg`, 'CO₂ Saved']}
+                formatter={(val: number) => [`${val} kg`, 'CO₂ Saved']}
               />
               <Area
                 type="monotone"
