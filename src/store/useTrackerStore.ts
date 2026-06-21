@@ -10,19 +10,15 @@ import {
 } from '../utils/gamification';
 import { format } from 'date-fns';
 
-// ─── Tracker Store ────────────────────────────────────────────────────────────
-
 interface TrackerStore {
   logs: HabitLog[];
   addLog: (log: Omit<HabitLog, 'id' | 'greenPoints'>) => void;
   removeLog: (id: string) => void;
   getLogsForDate: (date: string) => HabitLog[];
-  getLogsForMonth: (month: string) => HabitLog[]; // YYYY-MM
+  getLogsForMonth: (month: string) => HabitLog[];
   getTotalCo2Saved: () => number;
   reset: () => void;
 }
-
-// ─── Gamification Store ───────────────────────────────────────────────────────
 
 interface GamificationStore {
   greenPoints: number;
@@ -39,13 +35,15 @@ interface GamificationStore {
   reset: () => void;
 }
 
+const createFreshBadges = () => BADGE_DEFINITIONS.map((b) => ({ ...b }));
+
 export const useTrackerStore = create<TrackerStore>()(
   persist(
     (set, get) => ({
       logs: [],
 
       addLog: (logData) => {
-        const points = calcPointsForLog(logData.co2Saved, 0); // streak calc via gamification store
+        const points = calcPointsForLog(logData.co2Saved, 0);
         const newLog: HabitLog = {
           ...logData,
           id: crypto.randomUUID(),
@@ -58,18 +56,9 @@ export const useTrackerStore = create<TrackerStore>()(
         set((state) => ({ logs: state.logs.filter((l) => l.id !== id) }));
       },
 
-      getLogsForDate: (date: string) => {
-        return get().logs.filter((l) => l.date === date);
-      },
-
-      getLogsForMonth: (month: string) => {
-        return get().logs.filter((l) => l.date.startsWith(month));
-      },
-
-      getTotalCo2Saved: () => {
-        return get().logs.reduce((sum, l) => sum + l.co2Saved, 0);
-      },
-
+      getLogsForDate: (date: string) => get().logs.filter((l) => l.date === date),
+      getLogsForMonth: (month: string) => get().logs.filter((l) => l.date.startsWith(month)),
+      getTotalCo2Saved: () => get().logs.reduce((sum, l) => sum + l.co2Saved, 0),
       reset: () => set({ logs: [] }),
     }),
     {
@@ -84,7 +73,7 @@ export const useGamificationStore = create<GamificationStore>()(
     (set, get) => ({
       greenPoints: 0,
       level: 'seedling',
-      badges: BADGE_DEFINITIONS.map((b) => ({ ...b })),
+      badges: createFreshBadges(),
       streak: 0,
       longestStreak: 0,
       totalCo2Saved: 0,
@@ -94,27 +83,18 @@ export const useGamificationStore = create<GamificationStore>()(
       addPointsAndUpdate: (log: HabitLog) => {
         const state = get();
         const today = format(new Date(), 'yyyy-MM-dd');
-
-        // Streak calculation
         const streakResult = updateStreak(state.lastLogDate, today);
         let newStreak = state.streak;
-        if (streakResult === 0) {
-          // Already logged today, no streak change
-        } else if (streakResult === 1) {
-          newStreak = state.streak + 1;
-        } else {
-          newStreak = 1; // streak reset
-        }
+
+        if (streakResult === 1) newStreak = state.streak + 1;
+        else if (streakResult !== 0) newStreak = 1;
 
         const points = calcPointsForLog(log.co2Saved, newStreak);
         const newTotalPoints = state.greenPoints + points;
         const newTotalCo2 = state.totalCo2Saved + log.co2Saved;
         const newLevel = getLevelForPoints(newTotalPoints);
-        const newCategoriesLogged = Array.from(
-          new Set([...state.categoriesLogged, log.category])
-        );
+        const newCategoriesLogged = Array.from(new Set([...state.categoriesLogged, log.category]));
 
-        // Check badges
         const gamState = {
           greenPoints: newTotalPoints,
           level: newLevel,
@@ -156,7 +136,7 @@ export const useGamificationStore = create<GamificationStore>()(
         set({
           greenPoints: 0,
           level: 'seedling',
-          badges: BADGE_DEFINITIONS.map((b) => ({ ...b })),
+          badges: createFreshBadges(),
           streak: 0,
           longestStreak: 0,
           totalCo2Saved: 0,
